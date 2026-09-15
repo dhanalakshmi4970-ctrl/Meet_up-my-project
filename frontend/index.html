@@ -42,35 +42,78 @@
 
             <h1>Plan Our Meetup</h1>
 
-            <label for="date">📅 Choose a date</label>
-            <input type="date" id="date">
+            <!-- NAME -->
+            <div class="input-group">
 
-            <label for="time">🕐 Choose a time</label>
-            <input type="time" id="time">
+                <label for="name">👤 Your Name</label>
 
-            <label for="place">📍 Choose a place</label>
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your name"
+                    required
+                >
 
-            <select id="place">
+            </div>
 
-                <option value="">Select a place</option>
 
-                <option value="☕ Cafe">
-                    ☕ Cafe
-                </option>
+            <!-- DATE -->
+            <div class="input-group">
 
-                <option value="🌳 Park">
-                    🌳 Park
-                </option>
+                <label for="date">📅 Choose a date</label>
 
-                <option value="🎬 Movie">
-                    🎬 Movie
-                </option>
+                <input
+                    type="date"
+                    id="date"
+                    required
+                >
 
-                <option value="🍕 Restaurant">
-                    🍕 Restaurant
-                </option>
+            </div>
 
-            </select>
+
+            <!-- TIME -->
+            <div class="input-group">
+
+                <label for="time">🕐 Choose a time</label>
+
+                <input
+                    type="time"
+                    id="time"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PLACE -->
+            <div class="input-group">
+
+                <label for="place">📍 Choose a place</label>
+
+                <select id="place" required>
+
+                    <option value="">Select a place</option>
+
+                    <option value="☕ Cafe">
+                        ☕ Cafe
+                    </option>
+
+                    <option value="🌳 Park">
+                        🌳 Park
+                    </option>
+
+                    <option value="🎬 Movie">
+                        🎬 Movie
+                    </option>
+
+                    <option value="🍕 Restaurant">
+                        🍕 Restaurant
+                    </option>
+
+                </select>
+
+            </div>
+
 
             <button onclick="showReview()">
                 Continue 💕
@@ -90,18 +133,31 @@
                 Here's our plan!
             </p>
 
+
             <div class="details">
 
+                <!-- NAME -->
+                <p>
+                    👤 <strong>Name</strong>
+                    <span id="reviewName"></span>
+                </p>
+
+
+                <!-- DATE -->
                 <p>
                     📅 <strong>Date</strong>
                     <span id="reviewDate"></span>
                 </p>
 
+
+                <!-- TIME -->
                 <p>
                     🕐 <strong>Time</strong>
                     <span id="reviewTime"></span>
                 </p>
 
+
+                <!-- PLACE -->
                 <p>
                     📍 <strong>Place</strong>
                     <span id="reviewPlace"></span>
@@ -109,11 +165,15 @@
 
             </div>
 
+
             <button onclick="confirmMeetup()">
                 Confirm Meetup 💖
             </button>
 
-            <button class="back-btn" onclick="backToPlanning()">
+            <button
+                class="back-btn"
+                onclick="backToPlanning()"
+            >
                 ← Change
             </button>
 
@@ -133,15 +193,23 @@
                 Yay! Our meetup is confirmed! 🥹
             </p>
 
+
             <div class="details">
 
+                <!-- FINAL NAME -->
+                <p id="finalName"></p>
+
+                <!-- FINAL DATE -->
                 <p id="finalDate"></p>
 
+                <!-- FINAL TIME -->
                 <p id="finalTime"></p>
 
+                <!-- FINAL PLACE -->
                 <p id="finalPlace"></p>
 
             </div>
+
 
             <p class="small-message">
                 See you soon! ✨💕
@@ -150,6 +218,7 @@
         </section>
 
     </main>
+
 
     <script src="script.js"></script>
 

@@ -1,31 +1,45 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const nodemailer = require("nodemailer");
+
 require("dotenv").config();
 
-
-// Create Express app
 const app = express();
-
-
-// Port
 const PORT = process.env.PORT || 5000;
 
 
-// Check MongoDB connection string
+// ===============================
+// CHECK ENVIRONMENT VARIABLES
+// ===============================
+
 if (!process.env.MONGO_URI) {
-
     console.error("❌ MONGO_URI is missing in .env file");
+    process.exit(1);
+}
 
+if (!process.env.EMAIL_USER) {
+    console.error("❌ EMAIL_USER is missing in .env file");
+    process.exit(1);
+}
+
+if (!process.env.EMAIL_PASS) {
+    console.error("❌ EMAIL_PASS is missing in .env file");
+    process.exit(1);
+}
+
+if (!process.env.NOTIFY_EMAIL) {
+    console.error("❌ NOTIFY_EMAIL is missing in .env file");
     process.exit(1);
 }
 
 
-// Middleware
+// ===============================
+// MIDDLEWARE
+// ===============================
+
 app.use(express.json());
 
-
-// Serve frontend
 app.use(
     express.static(
         path.join(__dirname, "../frontend")
@@ -34,10 +48,16 @@ app.use(
 
 
 // ===============================
-// Meetup Schema
+// MONGODB SCHEMA
 // ===============================
 
 const meetupSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
     date: {
         type: String,
@@ -62,6 +82,10 @@ const meetupSchema = new mongoose.Schema({
 });
 
 
+// ===============================
+// MONGODB MODEL
+// ===============================
+
 const Meetup = mongoose.model(
     "Meetup",
     meetupSchema
@@ -69,7 +93,23 @@ const Meetup = mongoose.model(
 
 
 // ===============================
-// Home Page
+// EMAIL TRANSPORTER
+// ===============================
+
+const transporter = nodemailer.createTransport({
+
+    service: "gmail",
+
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+
+});
+
+
+// ===============================
+// HOME PAGE
 // ===============================
 
 app.get("/", (req, res) => {
@@ -85,7 +125,7 @@ app.get("/", (req, res) => {
 
 
 // ===============================
-// Save Meetup
+// CONFIRM MEETUP
 // ===============================
 
 app.post("/api/meetup", async (req, res) => {
@@ -93,6 +133,7 @@ app.post("/api/meetup", async (req, res) => {
     try {
 
         const {
+            name,
             date,
             time,
             place
@@ -100,22 +141,33 @@ app.post("/api/meetup", async (req, res) => {
 
 
         // Check required fields
-        if (!date || !time || !place) {
+
+        if (
+            !name ||
+            !date ||
+            !time ||
+            !place
+        ) {
 
             return res.status(400).json({
 
                 success: false,
 
                 message:
-                    "Date, time and place are required."
+                    "Name, date, time and place are required."
 
             });
 
         }
 
 
-        // Create meetup
+        // ===============================
+        // SAVE MEETUP TO MONGODB
+        // ===============================
+
         const meetup = new Meetup({
+
+            name: name,
 
             date: date,
 
@@ -126,11 +178,64 @@ app.post("/api/meetup", async (req, res) => {
         });
 
 
-        // Save to MongoDB
         await meetup.save();
 
 
-        // Send response
+        console.log(
+            `💗 New meetup confirmed by ${name}`
+        );
+
+
+        // ===============================
+        // SEND EMAIL NOTIFICATION
+        // ===============================
+
+        try {
+
+            await transporter.sendMail({
+
+                from: process.env.EMAIL_USER,
+
+                to: process.env.NOTIFY_EMAIL,
+
+                subject:
+                    "💌 New Meetup Confirmed!",
+
+                text: `
+A new meetup has been confirmed!
+
+👤 Name: ${name}
+
+📅 Date: ${date}
+
+🕐 Time: ${time}
+
+📍 Place: ${place}
+
+This notification was sent automatically by your Meetup website.
+                `
+
+            });
+
+
+            console.log(
+                "📩 Notification email sent successfully"
+            );
+
+        } catch (emailError) {
+
+            console.error(
+                "❌ Email notification failed:",
+                emailError.message
+            );
+
+        }
+
+
+        // ===============================
+        // SEND RESPONSE TO FRONTEND
+        // ===============================
+
         res.status(201).json({
 
             success: true,
@@ -146,7 +251,7 @@ app.post("/api/meetup", async (req, res) => {
     } catch (error) {
 
         console.error(
-            "Error saving meetup:",
+            "❌ Error saving meetup:",
             error
         );
 
@@ -166,7 +271,7 @@ app.post("/api/meetup", async (req, res) => {
 
 
 // ===============================
-// Get All Meetups
+// GET ALL MEETUPS
 // ===============================
 
 app.get("/api/meetups", async (req, res) => {
@@ -187,7 +292,7 @@ app.get("/api/meetups", async (req, res) => {
     } catch (error) {
 
         console.error(
-            "Error getting meetups:",
+            "❌ Error getting meetups:",
             error
         );
 
@@ -207,14 +312,17 @@ app.get("/api/meetups", async (req, res) => {
 
 
 // ===============================
-// MongoDB Connection
+// CONNECT MONGODB
 // ===============================
 
-console.log("Connecting to MongoDB...");
+console.log(
+    "Connecting to MongoDB..."
+);
 
 
 mongoose
     .connect(process.env.MONGO_URI)
+
     .then(() => {
 
         console.log(
@@ -222,15 +330,24 @@ mongoose
         );
 
 
-       app.listen(PORT, "0.0.0.0", () => {
+        app.listen(
 
-            console.log(
-                `Server running at http://localhost:${PORT}`
-            );
+            PORT,
 
-        });
+            "0.0.0.0",
+
+            () => {
+
+                console.log(
+                    `Server running at http://localhost:${PORT}`
+                );
+
+            }
+
+        );
 
     })
+
     .catch((error) => {
 
         console.error(

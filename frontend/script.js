@@ -17,12 +17,14 @@ function startPlan() {
     hideAllSections();
 
     document.getElementById("planning").style.display = "block";
-
 }
 
 
 // Show review
 function showReview() {
+
+    // Get values
+    const name = document.getElementById("name").value.trim();
 
     const date = document.getElementById("date").value;
 
@@ -31,9 +33,17 @@ function showReview() {
     const place = document.getElementById("place").value;
 
 
-    if (date === "" || time === "" || place === "") {
+    // Check all fields
+    if (
+        name === "" ||
+        date === "" ||
+        time === "" ||
+        place === ""
+    ) {
 
-        alert("Please choose the date, time and place 💗");
+        alert(
+            "Please enter your name and choose the date, time and place 💗"
+        );
 
         return;
     }
@@ -65,17 +75,27 @@ function showReview() {
     );
 
 
-    // Display review
+    // Display name in review
+    document.getElementById("reviewName").textContent =
+        name;
+
+
+    // Display date in review
     document.getElementById("reviewDate").textContent =
         formattedDate;
 
+
+    // Display time in review
     document.getElementById("reviewTime").textContent =
         formattedTime;
 
+
+    // Display place in review
     document.getElementById("reviewPlace").textContent =
         place;
 
 
+    // Show review section
     hideAllSections();
 
     document.getElementById("review").style.display = "block";
@@ -83,7 +103,7 @@ function showReview() {
 }
 
 
-// Go back
+// Go back to planning
 function backToPlanning() {
 
     hideAllSections();
@@ -96,6 +116,9 @@ function backToPlanning() {
 // Confirm meetup
 async function confirmMeetup() {
 
+    // Get values
+    const name = document.getElementById("name").value.trim();
+
     const date = document.getElementById("date").value;
 
     const time = document.getElementById("time").value;
@@ -103,8 +126,25 @@ async function confirmMeetup() {
     const place = document.getElementById("place").value;
 
 
+    // Check all fields again
+    if (
+        name === "" ||
+        date === "" ||
+        time === "" ||
+        place === ""
+    ) {
+
+        alert(
+            "Please enter your name and choose the date, time and place 💗"
+        );
+
+        return;
+    }
+
+
     try {
 
+        // Send data to backend
         const response = await fetch("/api/meetup", {
 
             method: "POST",
@@ -114,9 +154,15 @@ async function confirmMeetup() {
             },
 
             body: JSON.stringify({
+
+                name: name,
+
                 date: date,
+
                 time: time,
+
                 place: place
+
             })
 
         });
@@ -125,16 +171,20 @@ async function confirmMeetup() {
         const data = await response.json();
 
 
+        // Check server response
         if (!response.ok) {
 
-            alert(data.message || "Something went wrong 😢");
+            alert(
+                data.message ||
+                "Something went wrong 😢"
+            );
 
             return;
 
         }
 
 
-        // Final date
+        // Format date
         const dateObject = new Date(date + "T00:00:00");
 
         const formattedDate = dateObject.toLocaleDateString(
@@ -147,7 +197,7 @@ async function confirmMeetup() {
         );
 
 
-        // Final time
+        // Format time
         const timeObject = new Date("2000-01-01T" + time);
 
         const formattedTime = timeObject.toLocaleTimeString(
@@ -160,31 +210,43 @@ async function confirmMeetup() {
         );
 
 
+        // Display final name
+        document.getElementById("finalName").textContent =
+            "👤 " + name;
+
+
+        // Display final date
         document.getElementById("finalDate").textContent =
             "📅 " + formattedDate;
 
+
+        // Display final time
         document.getElementById("finalTime").textContent =
             "🕐 " + formattedTime;
 
+
+        // Display final place
         document.getElementById("finalPlace").textContent =
             "📍 " + place;
 
 
+        // Show success section
         hideAllSections();
 
         document.getElementById("success").style.display = "block";
 
 
+        // Create confetti
         createConfetti();
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Error:", error);
 
         alert(
             "Unable to connect to the server. " +
-            "Please make sure the backend is running."
+            "Please try again later."
         );
 
     }
@@ -212,7 +274,11 @@ function createConfetti() {
         confetti.classList.add("confetti");
 
         confetti.textContent =
-            emojis[Math.floor(Math.random() * emojis.length)];
+            emojis[
+                Math.floor(
+                    Math.random() * emojis.length
+                )
+            ];
 
 
         confetti.style.left =
