@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Let's Meet 💗</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="hearts"></div>
+
+    <main class="card">
+
+        <!-- WELCOME -->
+        <section id="welcome">
+
+            <div class="emoji">💌</div>
+
+            <h1>Hey, Let's Meet!</h1>
+
+            <p>
+                It's been a while...<br>
+                Let's choose a day to meet 😊
+            </p>
+
+            <button onclick="startPlan()">
+                Let's Plan 💗
+            </button>
+
+        </section>
+
+
+        <!-- PLANNING -->
+        <section id="planning">
+
+            <div class="emoji">📅</div>
+
+            <h1>Plan Our Meetup</h1>
+
+            <label for="date">📅 Choose a date</label>
+            <input type="date" id="date">
+
+            <label for="time">🕐 Choose a time</label>
+            <input type="time" id="time">
+
+            <label for="place">📍 Choose a place</label>
+
+            <select id="place">
+
+                <option value="">Select a place</option>
+
+                <option value="☕ Cafe">
+                    ☕ Cafe
+                </option>
+
+                <option value="🌳 Park">
+                    🌳 Park
+                </option>
+
+                <option value="🎬 Movie">
+                    🎬 Movie
+                </option>
+
+                <option value="🍕 Restaurant">
+                    🍕 Restaurant
+                </option>
+
+            </select>
+
+            <button onclick="showReview()">
+                Continue 💕
+            </button>
+
+        </section>
+
+
+        <!-- REVIEW -->
+        <section id="review">
+
+            <div class="emoji">💕</div>
+
+            <h1>Your Meetup</h1>
+
+            <p class="review-text">
+                Here's our plan!
+            </p>
+
+            <div class="details">
+
+                <p>
+                    📅 <strong>Date</strong>
+                    <span id="reviewDate"></span>
+                </p>
+
+                <p>
+                    🕐 <strong>Time</strong>
+                    <span id="reviewTime"></span>
+                </p>
+
+                <p>
+                    📍 <strong>Place</strong>
+                    <span id="reviewPlace"></span>
+                </p>
+
+            </div>
+
+            <button onclick="confirmMeetup()">
+                Confirm Meetup 💖
+            </button>
+
+            <button class="back-btn" onclick="backToPlanning()">
+                ← Change
+            </button>
+
+        </section>
+
+
+        <!-- SUCCESS -->
+        <section id="success">
+
+            <div class="emoji celebration">
+                🎉
+            </div>
+
+            <h1>It's a Plan! 💗</h1>
+
+            <p>
+                Yay! Our meetup is confirmed! 🥹
+            </p>
+
+            <div class="details">
+
+                <p id="finalDate"></p>
+
+                <p id="finalTime"></p>
+
+                <p id="finalPlace"></p>
+
+            </div>
+
+            <p class="small-message">
+                See you soon! ✨💕
+            </p>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
